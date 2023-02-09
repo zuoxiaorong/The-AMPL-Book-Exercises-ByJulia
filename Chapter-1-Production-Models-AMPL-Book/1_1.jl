@@ -1,17 +1,3 @@
-# 1-1. This exercise starts with a two-variable linear program similar in structure to the one of Sections 1.1 and 1.2, but with a quite different story behind it.
-# (a) You are in charge of an advertising campaign for a new product, with a budget of $1 million.
-# You can advertise on TV or in magazines. One minute of TV time costs $20,000 and reaches 1.8
-# million potential customers; a magazine page costs $10,000 and reaches 1 million. You must sign
-# up for at least 10 minutes of TV time. How should you spend your budget to maximize your audience? Formulate the problem in AMPL and solve it. Check the solution by hand using at least one
-# of the approaches described in Section 1.1.
-# (b) It takes creative talent to create effective advertising; in your organization, it takes three
-# person-weeks to create a magazine page, and one person-week to create a TV minute. You have
-# only 100 person-weeks available. Add this constraint to the model and determine how you should
-# now spend your budget.
-# (c) Radio advertising reaches a quarter million people per minute, costs $2,000 per minute, and
-# requires only 1 person-day of time. How does this medium affect your solutions?
-# (d) How does the solution change if you have to sign up for at least two magazine pages? A maximum of 120 minutes of radio?
-
 using JuMP
 using SCIP
 
