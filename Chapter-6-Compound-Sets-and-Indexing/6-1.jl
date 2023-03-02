@@ -64,7 +64,10 @@ function model()
 
     ORIG, DEST, PROD, avail, demand, rate, make_cost, trans_cost = data()
     model = lpmodel(model, ORIG, DEST, PROD, avail, demand, rate, make_cost, trans_cost)
-    optimize!(model)
+    optimize!(model) 
+    production = value.(model[:Make])
+    ship_production = value.(model[:Trans])
+    return production, ship_production
 end
 
 function a()
@@ -82,11 +85,9 @@ end
 
 function b()
     O,D,P = str()
-    ORIG, DEST, PROD, avail, demand, rate, make_cost, trans_cost = data()
-    
-    model = model() 
-    production = value.(model[:Make])
-    ship_production = value.(model[:Trans])
+    ORIG, DEST, PROD, avail, demand, rate, make_cost, trans_cost = data()   
+    production, ship_production = model()
+ 
     # (b)
     # Links = [(O[i], P[p]) for i in ORIG, p in PROD if production[i,p] >= 1000]
     # Links = [(O[i], D[j], P[p]) for i in ORIG, j in DEST, p in PROD if ship_production[i,j,p] != 0]
