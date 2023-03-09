@@ -69,6 +69,7 @@ function startmodel()
     optimize!(model)
     ship = value.(model[:Ship])
     assign_set = [(L[k] => ship[i,j]) for i in CITIES for j in CITIES for k in 1:length(LINKS) if  LINKS[k] == (i,j)]
+    println(assign_set)
 end
 
 function startnewmodel()
@@ -80,7 +81,9 @@ function startnewmodel()
     model = Network_transshipment_problem_newmodel(model, CITIES, supply, demand, cost, capacity)
     optimize!(model)
     ship = value.(model[:Ship])
+    println(ship)
     assign_set = [((C[i], C[j]) => ship[i,j]) for i in CITIES for j in CITIES if ship[i,j] != 0]
+    println(assign_set)
 end
 startnewmodel()
 
