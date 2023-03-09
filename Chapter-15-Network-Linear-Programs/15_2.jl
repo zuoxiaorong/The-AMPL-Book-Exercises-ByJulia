@@ -26,7 +26,7 @@ end
 function Maximum_traffic_flow_model(model, INTER, ROADS, entr, exit, cap)
     @variable(model, Traff[i in INTER, j in INTER; (i, j) in ROADS], lower_bound = 0, upper_bound = cap[findfirst(x -> x == (i,j), ROADS)])
 
-    @objective(model, Max, sum(Traff[i,j] for (i,j) in ROADS if i in entr))
+    @objective(model, Max, sum(Traff[i,j] for (i,j) in ROADS if i in entr && (j in entr) == false))
     @constraint(model, [k in setdiff(INTER, union(entr,exit))],  sum(Traff[i,k] for i in INTER if (i,k) in ROADS ) == sum(Traff[k,j] for j in INTER if (k,j) in ROADS ))
     return model
 end
@@ -62,7 +62,7 @@ function  startmodel()
     model = JuMP.direct_model(optimizer)
     set_time_limit_sec(model,100)
     
-    I, R, INTER, ROADS, entr, exit, cap = c_data()
+    I, R, INTER, ROADS, entr, exit, cap = b_data()
     model = Maximum_traffic_flow_model(model, INTER, ROADS, entr, exit, cap)
     optimize!(model)
     # ship = value.(model[:Use])
@@ -78,5 +78,5 @@ startmodel()
 # path = ["A" => "C", "C" => "E", "E" => "F"]
 # (b) obj = +1.80000000000000e+01
 # Flow = [("A", "B") => 11.0, ("A", "C") => 7.0, ("B", "C") => 0.0, ("B", "D") => 6.0, ("B", "E") => 5.0, ("C", "E") => 7.0, ("D", "E") => 0.0, ("D", "F") => 6.0, ("E", "F") => 12.0]
-# (c) obj = 
-# Flow = 
+# (c) obj = +2.20000000000000e+01
+# Flow = [("A", "B") => 13.0, ("A", "C") => 7.0, ("B", "C") => 0.0, ("B", "D") => 6.0, ("B", "E") => 9.0, ("C", "E") => 7.0, ("D", "E") => -0.0, ("D", "F") => 6.0, ("E", "F") => -0.0]

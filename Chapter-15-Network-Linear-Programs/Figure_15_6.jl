@@ -38,7 +38,7 @@ end
 function new_Maximum_traffic_flow_model(model, INTER, ROADS, entr, exit, cap)
     @variable(model, Traff[i in INTER, j in INTER; (i, j) in ROADS], lower_bound = 0, upper_bound = cap[findfirst(x -> x == (i,j), ROADS)])
 
-    @objective(model, Max, sum(Traff[i,j] for (i,j) in ROADS if i in entr))
+    @objective(model, Max, sum(Traff[i,j] for (i,j) in ROADS if i in entr && (j in entr) == false))
     @constraint(model, [k in setdiff(INTER, union(entr,exit))],  sum(Traff[i,k] for i in INTER if (i,k) in ROADS ) == sum(Traff[k,j] for j in INTER if (k,j) in ROADS ))
     return model
 end
