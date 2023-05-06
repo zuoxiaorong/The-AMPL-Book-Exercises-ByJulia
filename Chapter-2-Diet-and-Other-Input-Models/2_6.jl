@@ -57,30 +57,42 @@ function b_lpmodel(model)
     return model
 end
 
+function findpatterns(len, lens)
+    min_diff = minimum(lens)
+    set = []
+    function find_combinations(comb, items)
+        if sum(comb) <= len && abs(len - sum(comb)) < min_diff
+            push!(set, filter(x -> x > 0, comb))
+        end
+        
+        for item in items
+            new_comb = [comb..., item]
+            new_items = filter(x -> x <= len - sum(new_comb) && x <= item, lens)
+            find_combinations(new_comb, new_items)
+        end
+    end
+    find_combinations([0], lens)
+    patterns = [count(set[j] .== len) for len in lens, j in 1:length(set)]
+    return patterns
+end
+
 function c_lpmodel(model)
     orders = [48, 35, 24, 10, 8]
 
     num_aval = sum(orders)
+    lens = [20, 45, 50, 55, 75]
+    len = 110
 
-    nbr = [
-        3 1 0 2 1 3 5 0 0
-        0 2 0 0 0 1 0 0 0
-        1 0 1 0 0 0 0 0 2
-        0 0 1 1 0 0 0 2 0
-        0 0 0 0 1 0 0 0 0
-    ]
-
-    patterns = 1:9
-    widths = 1:5
+    nbr = findpatterns(len, lens)
+    display(nbr)
+    patterns = 1:size(nbr,2)
+    widths = 1:length(lens)
 
     @variable(model, x[1:num_aval], Bin)
     @variable(model, y[1:num_aval, patterns], Bin)
     @constraint(model, [i in 1:num_aval], sum(y[i,j] for j in patterns) == x[i])
-
     @constraint(model, [w in widths], sum(y[i,j]*nbr[w,j] for i in 1:num_aval for j in patterns) >= orders[w])
-
     @objective(model, Min, sum(x[i] for i in 1:num_aval))
-
     return model
 end
 
@@ -121,5 +133,7 @@ startmodel()
 #  solution
 # 2-6(a)  obj = 50
 # 2-6(b)  obj = 6
-# 2-6(c)  obj = 47
-# 2-6(d)  obj = 46.25 
+# 2-6(c)  obj = 47,  total_patterns = 9
+# 2-6(d)  obj = 46.25
+
+ 
